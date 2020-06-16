@@ -88,5 +88,13 @@ RSpec.describe RangeScan::Scanner do
       results = scanner.scan([host])
       expect(results.first.dig(:body)).to eq("foo")
     end
+
+    it do
+      scanner = described_class.new(port: port)
+      results = scanner.scan([host])
+
+      first = results.first
+      [:url, :ipv4, :code, :headers, :body].all? { |key| first.key? key }
+    end
   end
 end

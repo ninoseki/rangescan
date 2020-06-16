@@ -45,7 +45,13 @@ module RangeScan
 
       begin
         res = HTTP.timeout(timeout).headers(default_headers).get(url, ssl_options)
-        { ipv4: ipv4, code: res.code, body: res.body.to_s }
+        {
+          url: url,
+          ipv4: ipv4,
+          code: res.code,
+          headers: res.headers.to_h,
+          body: res.body.to_s
+        }
       rescue StandardError
         nil
       end
