@@ -1,5 +1,6 @@
 # rangescan
 
+[![Gem Version](https://badge.fury.io/rb/rangescan.svg)](https://badge.fury.io/rb/rangescan)
 [![Build Status](https://travis-ci.com/ninoseki/rangescan.svg?branch=master)](https://travis-ci.com/ninoseki/rangescan)
 [![Coverage Status](https://coveralls.io/repos/github/ninoseki/rangescan/badge.svg?branch=master)](https://coveralls.io/github/ninoseki/rangescan?branch=master)
 [![CodeFactor](https://www.codefactor.io/repository/github/ninoseki/rangescan/badge)](https://www.codefactor.io/repository/github/ninoseki/rangescan)
