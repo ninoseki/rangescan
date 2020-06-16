@@ -52,7 +52,7 @@ module RangeScan
           headers: res.headers.to_h,
           body: res.body.to_s
         }
-      rescue StandardError
+      rescue OpenSSL::SSL::SSLError, HTTP::Error, Addressable::URI::InvalidURIError
         nil
       end
     end
