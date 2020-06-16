@@ -11,7 +11,11 @@ module RangeScan
     def filter(results)
       results.select do |result|
         body = result.dig(:body) || ""
-        body =~ regexp
+        begin
+          body =~ regexp
+        rescue ArgumentError, Encoding::CompatibilityError
+          false
+        end
       end
     end
   end
