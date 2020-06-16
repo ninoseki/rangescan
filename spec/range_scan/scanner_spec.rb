@@ -76,6 +76,32 @@ RSpec.describe RangeScan::Scanner do
     end
   end
 
+  describe "#url_for" do
+    it do
+      scanner = described_class.new
+      url = scanner.url_for("127.0.0.1")
+      expect(url).to eq("http://127.0.0.1")
+    end
+
+    it do
+      scanner = described_class.new(port: 81)
+      url = scanner.url_for("127.0.0.1")
+      expect(url).to eq("http://127.0.0.1:81")
+    end
+
+    it do
+      scanner = described_class.new(scheme: "https")
+      url = scanner.url_for("127.0.0.1")
+      expect(url).to eq("https://127.0.0.1")
+    end
+
+    it do
+      scanner = described_class.new(scheme: "https", port: 81)
+      url = scanner.url_for("127.0.0.1")
+      expect(url).to eq("https://127.0.0.1:81")
+    end
+  end
+
   describe "#scan" do
     it do
       scanner = described_class.new(port: port)

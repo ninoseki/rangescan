@@ -24,6 +24,12 @@ module RangeScan
       @ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless verify_ssl
     end
 
+    def url_for(ipv4)
+      return "#{scheme}://#{ipv4}" if (port == 80 && scheme == "http") || (port == 443 && scheme == "https")
+
+      "#{scheme}://#{ipv4}:#{port}"
+    end
+
     def scan(ipv4s)
       Parallel.map(ipv4s) do |ipv4|
         get ipv4
@@ -41,7 +47,7 @@ module RangeScan
     end
 
     def get(ipv4)
-      url = "#{scheme}://#{ipv4}:#{port}"
+      url = url_for(ipv4)
 
       begin
         res = HTTP.timeout(timeout).headers(default_headers).get(url, ssl_options)
