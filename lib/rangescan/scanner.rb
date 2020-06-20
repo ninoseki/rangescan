@@ -55,8 +55,8 @@ module RangeScan
           url: url,
           ipv4: ipv4,
           code: res.code,
-          headers: res.headers.to_h,
-          body: res.body.to_s
+          headers: Utils.to_utf8(res.headers),
+          body: Utils.to_utf8(res.body.to_s)
         }
       rescue OpenSSL::SSL::SSLError, HTTP::Error, Addressable::URI::InvalidURIError
         nil
