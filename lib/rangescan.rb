@@ -3,6 +3,7 @@
 require "rangescan/version"
 
 require "rangescan/range"
+require "rangescan/utils"
 require "rangescan/scanner"
 require "rangescan/matcher"
 
