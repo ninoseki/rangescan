@@ -1,17 +1,24 @@
 # frozen_string_literal: true
 
-require "http"
-require "parallel"
+require "async"
+require "async/barrier"
+require "async/semaphore"
+require "async/http"
+require "etc"
+
+require "rangescan/monkey_patch"
 
 module RangeScan
   class Scanner
     attr_reader :context
     attr_reader :host
     attr_reader :port
+    attr_reader :processor_count
     attr_reader :scheme
     attr_reader :ssl_context
     attr_reader :timeout
     attr_reader :user_agent
+    attr_reader :verify_ssl
 
     def initialize(host: nil, port: nil, scheme: "http", verify_ssl: true, timeout: 5, user_agent: nil)
       @host = host
@@ -20,8 +27,12 @@ module RangeScan
       @scheme = scheme
       @user_agent = user_agent
 
+      @verify_ssl = verify_ssl
+
       @ssl_context = OpenSSL::SSL::SSLContext.new
       @ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless verify_ssl
+
+      @processor_count ||= Etc.nprocessors
     end
 
     def url_for(ipv4)
@@ -31,36 +42,46 @@ module RangeScan
     end
 
     def scan(ipv4s)
-      Parallel.map(ipv4s) do |ipv4|
-        get ipv4
-      end.compact
+      results = []
+      Async do
+        barrier = Async::Barrier.new
+        semaphore = Async::Semaphore.new(processor_count, parent: barrier)
+
+        ipv4s.each do |ipv4|
+          semaphore.async do
+            url = url_for(ipv4)
+
+            endpoint = Async::HTTP::Endpoint.parse(url, ssl_context: ssl_context, timeout: timeout)
+            client = Async::HTTP::Client.new(endpoint, retries: 0)
+            res = client.get(endpoint.path, default_request_headers)
+
+            headers = res.headers.fields.to_h
+            body = res.read || ""
+
+            results << {
+              url: url,
+              ipv4: ipv4,
+              code: res.status,
+              headers: Utils.to_utf8(headers),
+              body: Utils.to_utf8(body)
+            }
+          rescue Errno::ECONNRESET, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, EOFError, OpenSSL::SSL::SSLError, Async::TimeoutError
+            next
+          end
+        end
+        barrier.wait
+      end
+      results.compact
     end
 
     private
 
-    def default_headers
-      { host: host, user_agent: user_agent }.compact
+    def default_request_headers
+      @default_request_headers ||= { "host" => host, "user-agent" => user_agent }.compact
     end
 
     def ssl_options
       scheme == "http" ? {} : { ssl_context: ssl_context }
-    end
-
-    def get(ipv4)
-      url = url_for(ipv4)
-
-      begin
-        res = HTTP.timeout(timeout).headers(default_headers).get(url, ssl_options)
-        {
-          url: url,
-          ipv4: ipv4,
-          code: res.code,
-          headers: Utils.to_utf8(res.headers),
-          body: Utils.to_utf8(res.body.to_s)
-        }
-      rescue OpenSSL::SSL::SSLError, HTTP::Error, Addressable::URI::InvalidURIError
-        nil
-      end
     end
   end
 end
