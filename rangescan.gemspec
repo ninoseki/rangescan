@@ -32,8 +32,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.9"
   spec.add_development_dependency "webmock", "~> 3.8"
 
-  spec.add_dependency "http", "~> 4.4"
+  spec.add_dependency "async", "~> 1.26"
+  spec.add_dependency "async-http", "~> 0.52"
   spec.add_dependency "ipaddress", "~> 0.8"
-  spec.add_dependency "parallel", "~> 1.19"
   spec.add_dependency "thor", "~> 1.0"
 end
