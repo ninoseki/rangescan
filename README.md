@@ -31,7 +31,7 @@ Options:
   [--scheme=SCHEME]                  # Scheme to use (http or https)
   [--timeout=N]                      # Timeout in seconds
   [--user-agent=USER_AGENT]          # User Agent header
-  [--veryfy-ssl], [--no-veryfy-ssl]  # Verify SSL or not
+  [--verify-ssl], [--no-verify-ssl]  # Verify SSL or not
 
 Scan an IP range & filter by a regexp
 ```
