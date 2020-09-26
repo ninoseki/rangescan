@@ -12,6 +12,7 @@ module RangeScan
   class Scanner
     attr_reader :context
     attr_reader :host
+    attr_reader :max_concurrency
     attr_reader :port
     attr_reader :processor_count
     attr_reader :scheme
@@ -20,7 +21,7 @@ module RangeScan
     attr_reader :user_agent
     attr_reader :verify_ssl
 
-    def initialize(host: nil, port: nil, scheme: "http", verify_ssl: true, timeout: 5, user_agent: nil)
+    def initialize(host: nil, port: nil, scheme: "http", verify_ssl: true, timeout: 5, user_agent: nil, max_concurrency: nil)
       @host = host
       @port = port || (scheme == "http" ? 80 : 443)
       @timeout = timeout
@@ -32,7 +33,7 @@ module RangeScan
       @ssl_context = OpenSSL::SSL::SSLContext.new
       @ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless verify_ssl
 
-      @processor_count ||= Etc.nprocessors
+      @max_concurrency = max_concurrency || Etc.nprocessors * 2
     end
 
     def url_for(ipv4)
@@ -45,7 +46,7 @@ module RangeScan
       results = []
       Async do
         barrier = Async::Barrier.new
-        semaphore = Async::Semaphore.new(processor_count, parent: barrier)
+        semaphore = Async::Semaphore.new(max_concurrency, parent: barrier)
 
         ipv4s.each do |ipv4|
           semaphore.async do
