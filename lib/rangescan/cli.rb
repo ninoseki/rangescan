@@ -5,7 +5,7 @@ require "json"
 
 module RangeScan
   class CLI < Thor
-    desc "scan [IP_WITH_SUBNET_MASK, REGEXP]", "Scan an IP range & filter by a regexp"
+    desc "scan [IP_WITH_SUBNET_MASK, REGEXP]", "Scan an IP range & filter by a regexp (default regexp = .)"
     method_option :host, type: :string, desc: "Host header"
     method_option :port, type: :numeric, desc: "Port"
     method_option :scheme, type: :string, desc: "Scheme (http or https)"
@@ -13,7 +13,7 @@ module RangeScan
     method_option :user_agent, type: :string, desc: "User Agent"
     method_option :verify_ssl, type: :boolean, desc: "Whether to verify SSL or not"
     method_option :max_concurrency, type: :numeric, desc: "Concurrency limit for HTTP requests to scan"
-    def scan(ip_with_subnet_mask, regexp)
+    def scan(ip_with_subnet_mask, regexp = ".")
       symbolized_options = symbolize_hash_keys(options)
       range = Range.new(ip_with_subnet_mask)
 
