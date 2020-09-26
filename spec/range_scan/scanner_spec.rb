@@ -2,6 +2,7 @@
 
 require "glint"
 require "webrick"
+require "etc"
 
 HOST = "127.0.0.1"
 
@@ -73,6 +74,18 @@ RSpec.describe RangeScan::Scanner do
     it do
       scanner = described_class.new
       expect(scanner.port).to eq(80)
+    end
+  end
+
+  describe "#max_concurrency" do
+    it do
+      scanner = described_class.new(scheme: "http")
+      expect(scanner.max_concurrency).to eq(Etc.nprocessors * 2)
+    end
+
+    it do
+      scanner = described_class.new(scheme: "https", max_concurrency: 3)
+      expect(scanner.max_concurrency).to eq(3)
     end
   end
 

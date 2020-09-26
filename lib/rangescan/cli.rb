@@ -12,6 +12,7 @@ module RangeScan
     method_option :timeout, type: :numeric, desc: "Timeout in seconds"
     method_option :user_agent, type: :string, desc: "User Agent"
     method_option :verify_ssl, type: :boolean, desc: "Whether to verify SSL or not"
+    method_option :max_concurrency, type: :numeric, desc: "Concurrency limit for HTTP requests to scan"
     def scan(ip_with_subnet_mask, regexp)
       symbolized_options = symbolize_hash_keys(options)
       range = Range.new(ip_with_subnet_mask)
