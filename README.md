@@ -27,13 +27,14 @@ Usage:
 
 Options:
   [--host=HOST]                      # Host header
-  [--port=N]                         # Port to check (80 or 443)
-  [--scheme=SCHEME]                  # Scheme to use (http or https)
+  [--port=N]                         # Port
+  [--scheme=SCHEME]                  # Scheme (http or https)
   [--timeout=N]                      # Timeout in seconds
-  [--user-agent=USER_AGENT]          # User Agent header
-  [--verify-ssl], [--no-verify-ssl]  # Verify SSL or not
+  [--user-agent=USER_AGENT]          # User Agent
+  [--verify-ssl], [--no-verify-ssl]  # Whether to verify SSL or not
+  [--max-concurrency=N]              # Concurrency limit for HTTP requests to scan
 
-Scan an IP range & filter by a regexp
+Scan an IP range & filter by a regexp (default regexp = .)
 ```
 
 ## License
