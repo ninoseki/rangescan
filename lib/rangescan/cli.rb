@@ -34,5 +34,11 @@ module RangeScan
         hash.map { |k, v| [k.to_sym, v] }.to_h
       end
     end
+
+    class << self
+      def exit_on_failure?
+        true
+      end
+    end
   end
 end
