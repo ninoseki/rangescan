@@ -33,7 +33,7 @@ module RangeScan
       @ssl_context = OpenSSL::SSL::SSLContext.new
       @ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless verify_ssl
 
-      @max_concurrency = max_concurrency || Etc.nprocessors * 2
+      @max_concurrency = max_concurrency || Etc.nprocessors * 8
     end
 
     def url_for(ipv4)

@@ -80,7 +80,7 @@ RSpec.describe RangeScan::Scanner do
   describe "#max_concurrency" do
     it do
       scanner = described_class.new(scheme: "http")
-      expect(scanner.max_concurrency).to eq(Etc.nprocessors * 2)
+      expect(scanner.max_concurrency).to eq(Etc.nprocessors * 8)
     end
 
     it do
