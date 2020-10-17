@@ -15,8 +15,8 @@ def server
       AccessLog: []
     )
 
-    http.mount_proc("/") do |_, res|
-      body = "foo"
+    http.mount_proc("/") do |req, res|
+      body = req.raw_header.to_s + req.body.to_s
 
       res.status = 200
       res.content_length = body.size
@@ -125,7 +125,7 @@ RSpec.describe RangeScan::Scanner do
     it do
       scanner = described_class.new(port: port)
       results = scanner.scan([host])
-      expect(results.first.dig(:body)).to eq("foo")
+      expect(results.first.dig(:body)).to include("host: #{host}:#{port}")
     end
 
     it do
@@ -134,6 +134,15 @@ RSpec.describe RangeScan::Scanner do
 
       first = results.first
       [:url, :ipv4, :code, :headers, :body].all? { |key| first.key? key }
+    end
+
+    it do
+      scanner = described_class.new(port: port, headers: { "user-agent": "foo" })
+      results = scanner.scan([host])
+
+      first = results.first
+      body = first.dig(:body) || ""
+      expect(body).to include("foo")
     end
   end
 end
