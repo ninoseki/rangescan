@@ -11,6 +11,7 @@ require "rangescan/monkey_patch"
 module RangeScan
   class Scanner
     attr_reader :context
+    attr_reader :headers
     attr_reader :host
     attr_reader :max_concurrency
     attr_reader :port
@@ -21,13 +22,22 @@ module RangeScan
     attr_reader :user_agent
     attr_reader :verify_ssl
 
-    def initialize(host: nil, port: nil, scheme: "http", verify_ssl: true, timeout: 5, user_agent: nil, max_concurrency: nil)
+    def initialize(
+      headers: {},
+      host: nil,
+      max_concurrency: nil,
+      port: nil,
+      scheme: "http",
+      timeout: 5,
+      user_agent: nil,
+      verify_ssl: true
+    )
+      @headers = headers
       @host = host
       @port = port || (scheme == "http" ? 80 : 443)
-      @timeout = timeout
       @scheme = scheme
+      @timeout = timeout
       @user_agent = user_agent
-
       @verify_ssl = verify_ssl
 
       @ssl_context = OpenSSL::SSL::SSLContext.new
@@ -78,7 +88,7 @@ module RangeScan
     private
 
     def default_request_headers
-      @default_request_headers ||= { "host" => host, "user-agent" => user_agent }.compact
+      @default_request_headers ||= headers.merge({ "host" => host, "user-agent" => user_agent }.compact)
     end
 
     def ssl_options
