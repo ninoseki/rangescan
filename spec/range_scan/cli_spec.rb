@@ -23,4 +23,10 @@ RSpec.describe RangeScan::CLI do
       expect { subject.start ["scan", "127.0.0.1/24", "bar"] }.to output("[\n\n]\n").to_stdout
     end
   end
+
+  describe ".exit_on_failure?" do
+    it do
+      expect(described_class.exit_on_failure?).to eq(true)
+    end
+  end
 end
