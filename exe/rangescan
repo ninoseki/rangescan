@@ -5,4 +5,5 @@ $LOAD_PATH.unshift("#{__dir__}/../lib")
 
 require "rangescan"
 
-RangeScan::CLI.start
+ARGV.unshift(RangeScan::CLI.default_task) unless RangeScan::CLI.all_tasks.key?(ARGV[0])
+RangeScan::CLI.start(ARGV)
