@@ -27,6 +27,8 @@ module RangeScan
       puts JSON.pretty_generate(filtered)
     end
 
+    default_command :scan
+
     no_commands do
       def symbolize_hash_keys(hash)
         hash.map { |k, v| [k.to_sym, v] }.to_h
